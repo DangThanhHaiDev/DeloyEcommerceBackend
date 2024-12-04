@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Embeddable
 public class Size {
     String name;
-    String quantity;
+    int quantity;
 
     @Override
     public String toString() {

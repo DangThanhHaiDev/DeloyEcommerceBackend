@@ -23,8 +23,8 @@ public class Product {
     Long id;
     String title;
     String description;
+    boolean isDelete;
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "category_id")
     Category category;
     LocalDateTime createdAt;

@@ -6,6 +6,7 @@ import com.HaiDang.model.Product;
 import com.HaiDang.repository.CategoryRepository;
 import com.HaiDang.repository.ProductRepository;
 import com.HaiDang.request.ProductRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -28,29 +29,14 @@ public class ProductServiceImpl implements ProductService{
     CategoryRepository categoryRepository;
     @Override
     public Product createProduct(ProductRequest productRequest) {
-        Category topLevel = categoryRepository.findByName(productRequest.getTopLevelCategory());
-        if(topLevel == null){
-            topLevel = new Category();
-                    topLevel.setLevel(1);
-                    topLevel.setName(productRequest.getTopLevelCategory());
-            categoryRepository.save(topLevel);
+        Optional<Category> optionalTopCategory = categoryRepository.findById(productRequest.getTopLevelCategory());
+        Optional<Category> optionalTwoCategory = categoryRepository.findById(productRequest.getSecondLevelCategory());
+        Optional<Category> optionalThreeCategory = categoryRepository.findById(productRequest.getThirdLevelCategory());
+        if(!optionalTopCategory.isPresent() || !optionalTwoCategory.isPresent() || !optionalThreeCategory.isPresent()){
+            return null;
         }
-        Category secondCategory = categoryRepository.findByNameAndParent(productRequest.getSecondLevelCategory(), topLevel.getName());
-        if(secondCategory == null){
-            secondCategory = new Category();
-                   secondCategory.setLevel(2);
-                   secondCategory.setName(productRequest.getSecondLevelCategory());
-                   secondCategory.setParentCategory(topLevel);
-            categoryRepository.save(secondCategory);
-        }
-        Category thirdCategory = categoryRepository.findByNameAndParent(productRequest.getThirdLevelCategory(), secondCategory.getName());
-        if(thirdCategory == null){
-            thirdCategory = new Category();
-                    thirdCategory.setLevel(3);
-                    thirdCategory.setName(productRequest.getThirdLevelCategory());
-                    thirdCategory.setParentCategory(secondCategory);
-            categoryRepository.save(thirdCategory);
-        }
+        Category levelParent = optionalThreeCategory.get();
+
         Product newProduct = new Product();
                 newProduct.setQuantity(productRequest.getQuantity());
                 newProduct.setImageUrl(productRequest.getImageUrl());
@@ -63,17 +49,25 @@ public class ProductServiceImpl implements ProductService{
                 newProduct.setDiscountPresent(productRequest.getDiscountPresent());
                 newProduct.setDiscountedPrice(productRequest.getPrice() - productRequest.getDiscountPresent());
                 newProduct.setDescription(productRequest.getDescription());
-                newProduct.setCategory(thirdCategory);
+                newProduct.setCategory(levelParent);
+                newProduct.setDelete(false);
 
         return productRepository.save(newProduct);
     }
 
     @Override
+    @Transactional
     public String deleteProduct(Long productId) throws ProductException{
-        Product product = findProductById(productId);
-        product.getSize().clear();
-        productRepository.delete(product);
-        return "Product Deleted Successfully!";
+        try {
+            Product product = findProductById(productId);
+            product.getSize().clear();
+            productRepository.deleteSizesByProductId(productId);
+            productRepository.delete(product);
+        }catch (Exception e){
+            productRepository.deleteProduct(productId);
+        }
+
+        return productId+"";
     }
 
     @Override

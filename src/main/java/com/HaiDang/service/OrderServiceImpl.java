@@ -122,9 +122,16 @@ public class OrderServiceImpl implements OrderService{
         return orderRepository.findAll();
     }
 
+
     @Override
     public void deleteOrder(Long orderId) throws OrderException {
         Order order = findOrderById(orderId);
         orderRepository.deleteById(orderId );
+    }
+
+    @Override
+    public List<Order> getOrdersByFilter(LocalDateTime startDate, LocalDateTime endDate) {
+        List<Order> orders = orderRepository.getOrderByFilter(startDate, endDate);
+        return orders;
     }
 }

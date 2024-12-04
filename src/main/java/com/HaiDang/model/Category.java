@@ -28,6 +28,7 @@ public class Category {
     @JoinColumn(name = "parent_category")
     Category parentCategory;
     @ToString.Exclude
+    @JsonIgnore
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     List<Product> products = new ArrayList<>();
 }

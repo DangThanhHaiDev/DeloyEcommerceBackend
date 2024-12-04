@@ -6,6 +6,7 @@ import com.HaiDang.model.Order;
 import com.HaiDang.model.User;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -20,4 +21,5 @@ public interface OrderService {
     public Order canceledOrder(Long orderId) throws OrderException;
     List<Order> getAllOrders();
     public void deleteOrder(Long orderId) throws OrderException;
+    public List<Order> getOrdersByFilter(LocalDateTime startDate, LocalDateTime endDate);
 }

@@ -2,6 +2,7 @@ package com.HaiDang.repository;
 
 import com.HaiDang.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -12,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("select p from Product p" +
-            " where (p.category.name=:categoryName or :categoryName is null)" +
+            " where (p.category.name=:categoryName or :categoryName='')" +
             " and ((:minPrice = 0 or :maxPrice = 0) or (p.discountedPrice between :minPrice and :maxPrice))" +
             " and (:minDiscount is null or p.discountPresent >= :minDiscount)" +
             " ORDER BY " +
@@ -29,4 +30,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("select p from Product p" +
             " where p.category.name=:categoryName")
     public List<Product> findByCategory(@Param("categoryName") String categoryName);
+
+    @Modifying
+    @Query(value = "DELETE FROM product_sizes WHERE product_id = :productId", nativeQuery = true)
+    void deleteSizesByProductId(@Param("productId") Long productId);
+    @Query("update Product p set p.isDelete=true where p.id=:productId")
+    void deleteProduct(@Param("productId") Long productId);
 }

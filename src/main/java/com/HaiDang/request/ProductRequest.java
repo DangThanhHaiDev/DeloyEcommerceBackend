@@ -25,7 +25,7 @@ public class ProductRequest {
     String color;
     Set<Size> sizes = new HashSet<>();
     String imageUrl;
-    String topLevelCategory;
-    String secondLevelCategory;
-    String thirdLevelCategory;
+    Long topLevelCategory;
+    Long secondLevelCategory;
+    Long thirdLevelCategory;
 }
