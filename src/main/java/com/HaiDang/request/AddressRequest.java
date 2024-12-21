@@ -1,5 +1,6 @@
-package com.HaiDang.model;
+package com.HaiDang.request;
 
+import com.HaiDang.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,10 +10,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Entity
-public class Address {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+public class AddressRequest {
     Long id;
     String firstName;
     String lastName;
@@ -22,8 +20,7 @@ public class Address {
     @ManyToOne()
     @JoinColumn(name = "user_id")
     @JsonIgnore
-            @ToString.Exclude
+    @ToString.Exclude
     User user;
     boolean isExist;
-
 }

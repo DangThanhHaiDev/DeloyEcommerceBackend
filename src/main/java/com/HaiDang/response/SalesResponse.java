@@ -1,18 +1,16 @@
 package com.HaiDang.response;
 
-import com.HaiDang.model.Product;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
-
-
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductResponse {
-    boolean isSuccess;
-    String message;
-    Product product;
-    int row;
+public class SalesResponse {
+    int month;
+    double revenue;
 }

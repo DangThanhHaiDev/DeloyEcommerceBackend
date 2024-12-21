@@ -25,6 +25,7 @@ public class AuthController {
     }
     @PostMapping("/signin")
     public ResponseEntity<AuthResponse> loginUser(@RequestBody LoginRequest loginRequest) throws UserException {
+        System.out.println("Đã từng qua controller");
         return authService.loginUserHandler(loginRequest);
     }
 }

@@ -12,4 +12,7 @@ public class AuthResponse {
     String token;
     String message;
     String firstName;
+
+    String role;
+    boolean isBlock;
 }

@@ -23,6 +23,7 @@ public class User {
     String email;
     String role;
     String mobile;
+    boolean isBlock;
     LocalDateTime createdAt;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<Address> addresses = new ArrayList<>();

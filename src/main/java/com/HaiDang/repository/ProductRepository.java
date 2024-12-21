@@ -16,6 +16,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             " where (p.category.name=:categoryName or :categoryName='')" +
             " and ((:minPrice = 0 or :maxPrice = 0) or (p.discountedPrice between :minPrice and :maxPrice))" +
             " and (:minDiscount is null or p.discountPresent >= :minDiscount)" +
+            " and (:title is null or :title = '' or p.title like concat('%', :title, '%'))"+
+            " and p.isDelete=false" +
             " ORDER BY " +
             "CASE " +
             "WHEN :sort = 'price_low' THEN p.discountedPrice END ASC, " +
@@ -25,7 +27,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                                         @Param("minPrice") Double minPrice,
                                         @Param("maxPrice") Double maxPrice,
                                         @Param("minDiscount") Double minDiscount,
-                                        @Param("sort") String sort);
+                                        @Param("sort") String sort,
+                                        @Param("title")String title);
     public Optional<Product> findById(Long productId);
     @Query("select p from Product p" +
             " where p.category.name=:categoryName")
@@ -36,4 +39,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     void deleteSizesByProductId(@Param("productId") Long productId);
     @Query("update Product p set p.isDelete=true where p.id=:productId")
     void deleteProduct(@Param("productId") Long productId);
+
+    @Query("select p from Product p" +
+            " where (:id is null or p.category.id=:id) and p.isDelete=false")
+    public List<Product> adminFilter(@Param("id") Long id);
+    @Query("select p from Product p where p.category.id=:parentId and p.isDelete=false")
+    public List<Product> findSimilarProducts(@Param("parentId") Long parentId);
 }

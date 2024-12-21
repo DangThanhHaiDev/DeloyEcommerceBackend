@@ -17,6 +17,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class AuthService {
     @Autowired
@@ -29,6 +31,7 @@ public class AuthService {
     UserDetailsServiceImplement userDetailsService;
     @Autowired
     CartService cartService;
+
     public ResponseEntity<AuthResponse> createUserHandler(AuthRequest authRequest) throws UserException {
         if(userRepository.findByEmail(authRequest.getEmail()) != null){
             throw new UserException("Email already existed with another User");
@@ -42,6 +45,9 @@ public class AuthService {
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setPassword(password);
+        user.setRole(authRequest.getRole());
+        user.setCreatedAt(LocalDateTime.now());
+        user.setBlock(false);
         userRepository.save(user);
         Authentication authentication = new UsernamePasswordAuthenticationToken(email, password);
         String token = jwtProvider.generateToken(authentication);
@@ -51,27 +57,41 @@ public class AuthService {
                 .token(token)
                 .message(message)
                 .firstName(user.getFirstName())
+                .role(user.getRole())
                 .build();
         return new ResponseEntity<AuthResponse>(authResponse,HttpStatus.CREATED);
     }
+
     public ResponseEntity<AuthResponse> loginUserHandler(LoginRequest loginRequest) throws UserException {
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();
         Authentication authentication = authenticated(email, password);
+        if(authentication == null){
+            return new ResponseEntity<>(AuthResponse.builder().token(null).message("Đăng nhập thất bại").build(), HttpStatus.BAD_REQUEST);
+        }
         String token = jwtProvider.generateToken(authentication);
         String message = "Signin success!";
+        String role = userRepository.getRoleByUser(email);
+        User user = userRepository.findByEmail(email);
         AuthResponse authResponse = AuthResponse.builder()
                 .token(token)
                 .message(message)
+                .role(role)
+                .firstName(user.getFirstName())
+                .isBlock(user.isBlock())
                 .build();
         System.out.println(authResponse);
         return new ResponseEntity<AuthResponse>(authResponse, HttpStatus.CREATED);
     }
     public Authentication authenticated(String email, String password) throws UserException {
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        if(userDetails.getUsername()==null){
+            return null;
+        }
         if(!passwordEncoder.matches(password, userDetails.getPassword())){
             throw new UserException("Invalid password");
         }
+
         Authentication authentication = new UsernamePasswordAuthenticationToken(email, password);
         return authentication;
     }

@@ -3,6 +3,7 @@ package com.HaiDang.controller;
 import com.HaiDang.exception.OrderException;
 import com.HaiDang.model.Order;
 import com.HaiDang.response.ProductResponse;
+import com.HaiDang.response.SalesResponse;
 import com.HaiDang.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -64,5 +65,10 @@ public class AdminOrderController {
         LocalDateTime endTime = end.atTime(23,59,59);
         List<Order> orders = orderService.getOrdersByFilter(startTime, endTime);
         return new ResponseEntity<List<Order>>(orders, HttpStatus.OK);
+    }
+    @GetMapping("/revenue/{year}")
+    public ResponseEntity<List<SalesResponse>> getRevenue(@PathVariable("year") Integer year){
+        List<SalesResponse> list = orderService.getRevenueByYear(year);
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 }

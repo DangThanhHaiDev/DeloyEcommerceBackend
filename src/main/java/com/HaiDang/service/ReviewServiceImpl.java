@@ -21,14 +21,15 @@ public class ReviewServiceImpl implements ReviewService{
 
     @Override
     public Review createReview(ReviewRequest reviewRequest, User user) throws ProductException {
-        Product product = productService.findProductById(reviewRequest.getProductId());
-        Review review = Review.builder()
-                .createdAt(LocalDateTime.now())
-                .review(reviewRequest.getReview())
-                .product(product)
-                .user(user)
-                .build();
-        return reviewRepository.save(review);
+//        Product product = productService.findProductById(reviewRequest.getProductId());
+//        Review review = Review.builder()
+//                .createdAt(LocalDateTime.now())
+//                .review(reviewRequest.getReview())
+//                .product(product)
+//                .user(user)
+//                .build();
+//        return reviewRepository.save(review);
+        return null;
     }
 
     @Override

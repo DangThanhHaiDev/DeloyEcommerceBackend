@@ -26,4 +26,9 @@ public class JwtProvider {
         Claims claims = Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(jwt).getBody();
         return String.valueOf(claims.get("email"));
     }
+    public Date getExpirationDate(String jwt){
+        jwt = jwt.substring(7);
+        Claims claims = Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(jwt).getBody();
+        return (Date) claims.getExpiration();
+    }
 }

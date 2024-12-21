@@ -43,7 +43,6 @@ public class CartItemController {
                                                            @RequestBody CartItem cartItem) throws UserException, CartItemException {
 
         User user = userService.findUserProfileByJwt(jwt);
-        System.out.println("wjiadjasdnnka------===:"+cartItem.toString());
         cartItemService.updateCartItem(user.getId(), id, cartItem);
         CartItemResponse response = new CartItemResponse();
         response.setSuccess(true);

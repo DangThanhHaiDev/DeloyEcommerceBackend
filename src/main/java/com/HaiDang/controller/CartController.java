@@ -41,4 +41,10 @@ public class CartController {
         productResponse.setMessage("Item is added successfully");
         return new ResponseEntity<ProductResponse>(productResponse, HttpStatus.OK);
     }
+    @GetMapping("number_item")
+    public ResponseEntity<Integer> getToItemsNumber(@RequestHeader("Authorization") String jwt) throws UserException {
+        User user = userService.findUserProfileByJwt(jwt);
+
+        return new ResponseEntity<>(cartService.getNumberItems(user.getId()), HttpStatus.OK);
+    }
 }

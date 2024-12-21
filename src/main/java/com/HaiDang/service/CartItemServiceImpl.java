@@ -1,6 +1,5 @@
 package com.HaiDang.service;
 
-import com.HaiDang.exception.CartException;
 import com.HaiDang.exception.CartItemException;
 import com.HaiDang.exception.UserException;
 import com.HaiDang.model.Cart;
@@ -8,9 +7,11 @@ import com.HaiDang.model.CartItem;
 import com.HaiDang.model.Product;
 import com.HaiDang.model.User;
 import com.HaiDang.repository.CartItemRepository;
+import com.HaiDang.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -19,21 +20,23 @@ public class CartItemServiceImpl implements CartItemService {
     CartItemRepository cartItemRepository;
     @Autowired
     UserService userService;
+    @Autowired
+    ProductRepository productRepository;
     @Override
     public CartItem createCartItem(CartItem cartItem) {
-        cartItem.setPrice(cartItem.getProduct().getPrice() * cartItem.getQuantity());
         cartItem.setQuantity(1);
-        cartItem.setDiscountedPrice(cartItem.getDiscountedPrice()* cartItem.getQuantity());
+        cartItem.setPrice(cartItem.getProduct().getPrice() * cartItem.getQuantity());
+        cartItem.setDiscountedPrice(cartItem.getProduct().getDiscountedPrice());
         return cartItemRepository.save(cartItem);
     }
 
     @Override
     public CartItem updateCartItem(Long userId, Long id, CartItem cartItem) throws UserException, CartItemException {
         CartItem item = findCartItemById(id);
+        Optional<Product> product = productRepository.findById(cartItem.getProduct().getId());
         User user = userService.findUserById(userId);
-        if(user.getId() == item.getUserId()){
+        if(Objects.equals(user.getId(), item.getUserId())){
             item.setQuantity(cartItem.getQuantity());
-            item.setDiscountedPrice(cartItem.getDiscountedPrice()* item.getQuantity());
         }
         return cartItemRepository.save(item);
     }
@@ -45,11 +48,12 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public void removeCartItem(Long userId, Long cartItemId) throws CartItemException, UserException {
-        CartItem cartItem = findCartItemById(cartItemId);
-        User user = userService.findUserById(userId);
-        if(user.getId() == cartItem.getUserId()){
-            cartItemRepository.delete(cartItem);
-        }
+            CartItem cartItem = findCartItemById(cartItemId);
+            User user = userService.findUserById(userId);
+            System.out.println(cartItem.getUserId()+"---"+userId);
+            if(Objects.equals(userId, cartItem.getUserId())){
+                cartItemRepository.delete(cartItem);
+            }
         else{
             throw new CartItemException("You can't remove another users item");
         }

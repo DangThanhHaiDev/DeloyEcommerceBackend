@@ -16,7 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class ProductRequest {
+public class ProductExcelRequest {
     String title;
     String description;
     double price;
@@ -26,7 +26,7 @@ public class ProductRequest {
     String color;
     Set<Size> sizes = new HashSet<>();
     String imageUrl;
-    Long topLevelCategory;
-    Long secondLevelCategory;
-    Long thirdLevelCategory;
+    String topLevelCategory;
+    String secondLevelCategory;
+    String thirdLevelCategory;
 }

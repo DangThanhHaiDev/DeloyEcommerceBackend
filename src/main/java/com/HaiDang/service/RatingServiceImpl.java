@@ -20,14 +20,14 @@ public class RatingServiceImpl implements RatingService{
     ProductService productService;
     @Override
     public Rating createRating(RatingRequest ratingRequest, User user) throws ProductException {
-        Product product = productService.findProductById(ratingRequest.getProductId());
-        Rating rating = Rating.builder()
-                .createdAt(LocalDateTime.now())
-                .rating(ratingRequest.getRating())
-                .user(user)
-                .product(product)
-                .build();
-        return ratingRepository.save(rating);
+//        Product product = productService.findProductById(ratingRequest.getProductId());
+//        Rating rating = Rating.builder()
+//                .createdAt(LocalDateTime.now())
+//                .rating(ratingRequest.getRating())
+//                .user(user)
+//                .product(product)
+//                .build();
+        return null;
     }
 
     @Override
